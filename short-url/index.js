@@ -10,7 +10,7 @@ const URL = require("./model/url")
 
 const cookieParser = require("cookie-parser");
 
-const { restrictToLoggedinUserOnly, checkAuth } = require("./middlewares/auth");
+const { checkForAuthentication, restrictTo } = require("./middlewares/auth");
 
 
 // connection
@@ -27,12 +27,13 @@ app.use(express.json());
 
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
+app.use(checkForAuthentication);
 
 // route
 
-app.use("/url", restrictToLoggedinUserOnly, urlRoute);
+app.use("/url", restrictTo(['NORMAL', "ADMIN"]), urlRoute);
 
-app.use("/", checkAuth, staticRoute);
+app.use("/", staticRoute);
 
 app.use("/user", userRoute);
 
